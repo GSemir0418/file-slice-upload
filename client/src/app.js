@@ -45,7 +45,6 @@ import { INFO, ALLOWED_TYPE, CHUNK_SIZE, API } from "./config";
     // 利用while循环切片并发送请求
     while (uploadedSize < size) {
       const fileChunk = file.slice(uploadedSize, uploadedSize + CHUNK_SIZE);
-      console.log(fileChunk);
       const formData = createFormData({
         name,
         fileName,
@@ -66,9 +65,10 @@ import { INFO, ALLOWED_TYPE, CHUNK_SIZE, API } from "./config";
       oProgress.value = uploadedSize;
     }
 
-    // 全部chunk上传结束后，显示成功，清空数据
+    // 全部chunk上传结束后，显示成功，清空数据，展示video元素
     oInfo.innerHTML = INFO["UPLOAD_SUCCESS"];
     oUploader.value = null;
+    createVideoElement(response.data.video_url);
   }
 
   // 构造请求参数的函数
@@ -81,6 +81,15 @@ import { INFO, ALLOWED_TYPE, CHUNK_SIZE, API } from "./config";
     postData.append("uploadedSize", uploadedSize);
     postData.append("chunk", chunk);
     return postData;
+  }
+
+  // 构造video元素的函数
+  function createVideoElement(url) {
+    const oVideo = document.createElement("video");
+    oVideo.controls = true;
+    oVideo.src = url;
+    oVideo.width = "500";
+    document.body.appendChild(oVideo);
   }
 
   function init() {

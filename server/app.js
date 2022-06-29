@@ -15,6 +15,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // 请求体中上传数据的处理，返回的数据在req.files中
 app.use(uploader());
+// 指定静态文件url
+app.use("/", express.static("upload_tem"));
 
 // 跨域处理
 app.all("*", (_, res, next) => {
@@ -52,7 +54,12 @@ app.post("/upload_video", (req, res, next) => {
     }
     // append数据到文件，结束本次上传
     appendFileSync(filePath, chunk.data);
-    res.send({ code: 200, msg: "chunk appended" });
+    res.send({
+      code: 200,
+      msg: "chunk appended",
+      // 将服务器静态数据文件路径发送给前端
+      video_url: "http://localhost:8000/" + filename,
+    });
     return;
   }
   // 如果uploadedSize为0，表示没有正在上传的数据
